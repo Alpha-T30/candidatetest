@@ -19,7 +19,7 @@ export const getCandidate = async (setCandidate) => {
   }
 };
 
-export const update = async (data, setCandidate) => {
+export const update = async (data, setCandidate, toast) => {
   console.log(data);
   try {
     const res = await publicRequest.patch(
@@ -28,6 +28,16 @@ export const update = async (data, setCandidate) => {
     );
     console.log(res.data);
     setCandidate(res.data);
+    toast.success("Update successfull", {
+      position: "top-right",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
   } catch (error) {
     console.log(error);
   }

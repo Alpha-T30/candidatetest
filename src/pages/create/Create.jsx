@@ -2,8 +2,11 @@ import React, { useState } from "react";
 
 import { useEffect } from "react";
 import { getCandidate, getSectors, update } from "../../api/apiCalls";
-import "../signup/signup.css";
-export default function Signup() {
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../update/update.css";
+
+export default function Create() {
   const [sectors, setSectors] = useState([]);
   const [sectors1, setSectors1] = useState([]);
   const [candidate, setCandidate] = useState([]);
@@ -58,24 +61,66 @@ export default function Signup() {
   }, [sectors, candidate]);
 
   const updateCandidate = () => {
-    update(candidate, setCandidate);
+    if (candidate.sectors.length === 0) {
+      toast.warn("Please select at least one sector", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    } else if (candidate.isAgree === false) {
+      toast.warn("You must agree to the trems", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    } else if (candidate?.name === "" || candidate.name?.length < 3) {
+      toast.warn("Please Insert A Name (at least 3 letter)", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    } else {
+      update(candidate, setCandidate, toast);
+    }
   };
   return (
     <div className="main">
+      <ToastContainer></ToastContainer>
       <div className="container">
-        <h1>
-          Please enter your name and pick the Sectors you are currently involved
-          in.
-        </h1>
+        <div className="heading">
+          <span>
+            Please enter your name and pick the Sectors you are currently
+            involved in.
+          </span>
+        </div>
         <div>
           <div className="name">
-            <label htmlFor="name">Insert Name:</label>
+            <label className="namelabel" htmlFor="name">
+              Name:
+            </label>
             <input
+              className="form-control"
+              type="text"
+              placeholder="Default input"
               value={candidate?.name || ""}
               onChange={(e) =>
                 setCandidate({ ...candidate, name: e.target.value })
               }
-              type="text"
               id="name"
             />
           </div>
@@ -102,7 +147,6 @@ export default function Signup() {
                     <div key={val.val} className="form-check">
                       <input
                         type="checkbox"
-                        // className="form-check-input"
                         className={
                           val?.subsubsectors?.length === 0
                             ? "form-check-input"
@@ -160,8 +204,9 @@ export default function Signup() {
             );
           })}
         </div>
-        <div>
+        <div style={{ margin: "10px" }}>
           <input
+            className="form-check-input"
             onChange={() =>
               setCandidate({ ...candidate, isAgree: !candidate.isAgree })
             }
@@ -170,10 +215,22 @@ export default function Signup() {
             name="terms"
             id="terms"
           />
-          <label htmlFor="terms">Agree to terms</label>
+          <label
+            style={{
+              marginLeft: "7px",
+              color: "blue",
+              fontWeight: "bold",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+          >
+            Agree to terms
+          </label>
         </div>
-        <div>
-          <button onClick={updateCandidate}>Save</button>
+        <div className="btndiv">
+          <button className="custombtn" onClick={updateCandidate}>
+            Save
+          </button>
         </div>
       </div>
     </div>
